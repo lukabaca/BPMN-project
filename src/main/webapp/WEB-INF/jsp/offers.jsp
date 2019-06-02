@@ -9,6 +9,7 @@
             src="https://code.jquery.com/jquery-3.4.1.js"
             integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
             crossorigin="anonymous"></script>
+    <script src="/js/main.js"></script>
 </head>
 <body>
     <div class="container">
@@ -36,14 +37,21 @@
                                 <td>${offer.description}</td>
                                 <td>${offer.prize}</td>
                                 <c:if test = "${offer.verified}">
-                                    <td>${offer.approved}</td>
+                                    <td>
+                                        <c:if test = "${offer.approved}">
+                                            <span class="offer-approved">Offer is approved</span>
+                                        </c:if>
+                                        <c:if test = "${!offer.approved}">
+                                            <span class="offer-rejected">Offer is rejected</span>
+                                        </c:if>
+                                    </td>
                                 </c:if>
-                                <td>
-                                    <c:if test = "${!offer.verified}">
+                                <c:if test = "${!offer.verified}">
+                                    <td>
                                         <button class="btn btn-primary accept-btn">Accept</button>
                                         <button class="btn btn-secondary refuse-btn">Refuse</button>
-                                    </c:if>
-                                </td>
+                                    </td>
+                                </c:if>
                             </tr>
                         </c:forEach>
                     </tbody>
@@ -53,51 +61,3 @@
     </div>
 </body>
 </html>
-<script>
-    $(document).ready(function () {
-        console.log('dokument');
-        $('.accept-btn').on('click', function () {
-            let offerId = $(this).closest('tr').attr('row-id');
-            let data = {
-                id: offerId
-            };
-            data = JSON.stringify(data);
-            $.ajax({
-                type: "POST",
-                contentType: "application/json",
-                url: "/changeOfferState?mode=" + 1,
-                data: data,
-                dataType: 'json',
-                timeout: 600000,
-                success: function (data) {
-                    location.reload();
-                },
-                error: function (e) {
-                    location.reload();
-                }
-            });
-        });
-
-        $('.refuse-btn').on('click', function () {
-            let offerId = $(this).closest('tr').attr('row-id');
-            let data = {
-                id: offerId
-            };
-            data = JSON.stringify(data);
-            $.ajax({
-                type: "POST",
-                contentType: "application/json",
-                url: "/changeOfferState?mode=" + 0,
-                data: data,
-                dataType: 'json',
-                timeout: 600000,
-                success: function (data) {
-                    location.reload();
-                },
-                error: function (e) {
-                    location.reload();
-                }
-            });
-        });
-    });
-</script>
